@@ -20,6 +20,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body data-theme="dark">
+    <!-- Cinematic Preloader -->
+    <div id="preloader">
+        <div class="preloader-text">Middle Class Musicians</div>
+        <div class="preloader-line"></div>
+    </div>
+
     <!-- Custom Cursor -->
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
@@ -40,7 +46,7 @@
             MCM
         </div>
         <div class="nav-links">
-            <a href="#studio" class="sfx-hover">Studio</a>
+            <a href="#hero" class="sfx-hover">Studio</a>
             <a href="#interactive-hub" class="sfx-hover">Solutions</a>
             <a href="#portfolio" class="sfx-hover">Work</a>
             <a href="https://wa.me/919315778147" class="btn-nav sfx-hover" target="_blank">Book Session</a>
@@ -83,12 +89,12 @@
                     <button id="magic-btn" class="glass-btn massive-btn sfx-hover">Don't Touch It</button>
                     
                     <div class="sub-nodes">
-                        <div class="sub-node glass-panel"><i data-lucide="mic"></i> Recording</div>
-                        <div class="sub-node glass-panel"><i data-lucide="sliders"></i> Mixing & Mastering</div>
-                        <div class="sub-node glass-panel"><i data-lucide="drum"></i> Beat Production</div>
-                        <div class="sub-node glass-panel"><i data-lucide="briefcase"></i> Music Business</div>
-                        <div class="sub-node glass-panel"><i data-lucide="users"></i> Artist Management</div>
-                        <div class="sub-node glass-panel"><i data-lucide="video"></i> Video Production</div>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="mic"></i> Recording</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="sliders"></i> Mixing & Mastering</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="drum"></i> Beat Production</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="briefcase"></i> Music Business</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="users"></i> Artist Management</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="video"></i> Video Production</a>
                     </div>
                 </div>
             </div>
@@ -142,6 +148,12 @@
                         </div>
                     </a>
                 </div>
+
+                <div class="portfolio-cta gsap-fade-up">
+                    <a href="https://linktr.ee/middleclassmusicians?fbclid=PAZXh0bgNhZW0CMTEAAaZq_NjJ0vzWulKIgj4xxFTEo-ICGPIP6D_kVdXKcBrZ8yVUFjXiqbi95J4_aem_98jXcIBxY3FRd4RmTzmu2g" target="_blank" class="glass-btn btn-large sfx-hover">
+                        Explore Full Portfolio <i data-lucide="external-link" style="margin-left: 10px; width: 20px;"></i>
+                    </a>
+                </div>
             </div>
         </section>
     </main>
@@ -170,7 +182,6 @@
                     <h3>Locate Middle Class Musicians</h3>
                     <p>Click to open Google Maps</p>
                 </div>
-                <!-- Simulated map background -->
                 <div class="map-bg" style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80');"></div>
             </div>
 
