@@ -19,7 +19,24 @@
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body data-theme="dark">
+<body data-theme="dark" class="preloading">
+
+    <!-- CINEMATIC PRELOADER -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <h1 class="preloader-title">Middle Class Musicians</h1>
+            <div class="preloader-bar-container">
+                <div class="preloader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Audio (O Piyaa) -->
+    <audio id="bg-audio" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <!-- Replace the src above with your actual "O Piyaa" audio URL -->
+    </audio>
+
     <!-- Custom Cursor -->
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
@@ -29,7 +46,7 @@
     <div class="noise-overlay"></div>
 
     <!-- Theme Toggle -->
-    <button class="theme-toggle glass-panel sfx-hover" id="theme-btn">
+    <button class="theme-toggle glass-panel sfx-hover" id="theme-btn" aria-label="Toggle Theme">
         <i data-lucide="sun" class="sun-icon"></i>
         <i data-lucide="moon" class="moon-icon"></i>
     </button>
@@ -40,7 +57,7 @@
             MCM
         </div>
         <div class="nav-links">
-            <a href="#studio" class="sfx-hover">Studio</a>
+            <a href="#hero" class="sfx-hover">Studio</a>
             <a href="#interactive-hub" class="sfx-hover">Solutions</a>
             <a href="#portfolio" class="sfx-hover">Work</a>
             <a href="https://wa.me/919315778147" class="btn-nav sfx-hover" target="_blank">Book Session</a>
@@ -67,10 +84,10 @@
             
             <div class="hero-right">
                 <!-- Auto Sliding Image Preview -->
-                <div class="hero-slider">
-                    <div class="slide active" style="background-image: url('https://lh3.googleusercontent.com/d/16wildrlQxD9pmGyp-8PcYiMC_aQR4NE8');"></div>
-                    <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/d/1AmyFUO3fCBcauHfsWG0-zWBlRrfy6o8E');"></div>
+                <div class="hero-slider" id="hero-slider">
+                    <div class="slide active" style="background-image: url('https://lh3.googleusercontent.com/d/1AmyFUO3fCBcauHfsWG0-zWBlRrfy6o8E');"></div>
                     <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/d/1aSvW7Bep42TUfMXBb7kn6nU1Y7bbWJRP');"></div>
+                    <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/d/16wildrlQxD9pmGyp-8PcYiMC_aQR4NE8');"></div>
                     <div class="hero-image-overlay"></div>
                 </div>
             </div>
@@ -83,12 +100,12 @@
                     <button id="magic-btn" class="glass-btn massive-btn sfx-hover">Don't Touch It</button>
                     
                     <div class="sub-nodes">
-                        <div class="sub-node glass-panel"><i data-lucide="mic"></i> Recording</div>
-                        <div class="sub-node glass-panel"><i data-lucide="sliders"></i> Mixing & Mastering</div>
-                        <div class="sub-node glass-panel"><i data-lucide="drum"></i> Beat Production</div>
-                        <div class="sub-node glass-panel"><i data-lucide="briefcase"></i> Music Business</div>
-                        <div class="sub-node glass-panel"><i data-lucide="users"></i> Artist Management</div>
-                        <div class="sub-node glass-panel"><i data-lucide="video"></i> Video Production</div>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="mic"></i> Recording</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="sliders"></i> Mixing & Mastering</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="drum"></i> Beat Production</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="briefcase"></i> Music Business</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="users"></i> Artist Management</a>
+                        <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="video"></i> Video Production</a>
                     </div>
                 </div>
             </div>
@@ -102,20 +119,33 @@
                 </div>
                 
                 <div class="portfolio-grid">
-                    <a href="https://wa.me/919315778147" class="portfolio-item glass-panel gsap-fade-up sfx-hover">
-                        <div class="pi-image-wrapper">
-                            <video autoplay loop muted playsinline class="pi-media">
-                                <source src="<iframe src="https://drive.google.com/file/d/1efzxt_UqwlR5mFue7OlJc_WfscXJAoSP/preview" width="640" height="480"></iframe>" type="video/mp4">
+                    <!-- Portfolio Item 1 (Video) -->
+                    <div class="portfolio-item glass-panel gsap-fade-up">
+                        <div class="pi-image-wrapper portfolio-video-container">
+                            <video loop playsinline class="pi-media portfolio-video" muted>
+                                <source src="https://drive.google.com/uc?export=download&id=1efzxt_UqwlR5mFue7OlJc_WfscXJAoSP" type="video/mp4">
                             </video>
                             <div class="pi-overlay"></div>
-                            <div class="play-icon-overlay"><i data-lucide="play-circle"></i></div>
+                            
+                            <!-- Video Controls Overlay -->
+                            <div class="video-controls">
+                                <button class="video-play-btn sfx-hover" aria-label="Play/Pause">
+                                    <i data-lucide="play-circle" class="play-icon"></i>
+                                    <i data-lucide="pause-circle" class="pause-icon" style="display:none;"></i>
+                                </button>
+                                <button class="video-mute-btn sfx-hover" aria-label="Mute/Unmute">
+                                    <i data-lucide="volume-x" class="mute-icon"></i>
+                                    <i data-lucide="volume-2" class="unmute-icon" style="display:none;"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="pi-content">
+                        <a href="https://wa.me/919315778147" class="pi-content sfx-hover" style="display: block; text-decoration: none; color: inherit;">
                             <h4>Vocal Tracking</h4>
                             <span>Studio Documentation</span>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                     
+                    <!-- Portfolio Item 2 (Image) -->
                     <a href="https://instagram.com/middleclassmusicians" class="portfolio-item glass-panel gsap-fade-up sfx-hover" style="transform: translateY(40px);">
                         <div class="pi-image-wrapper">
                             <div class="pi-media" style="background-image: url('https://drive.google.com/uc?export=view&id=1aSvW7Bep42TUfMXBb7kn6nU1Y7bbWJRP');"></div>
@@ -128,29 +158,52 @@
                         </div>
                     </a>
                     
-                    <a href="mailto:booking@middleclassmusicians.com" class="portfolio-item glass-panel gsap-fade-up sfx-hover">
-                        <div class="pi-image-wrapper">
-                            <video autoplay loop muted playsinline class="pi-media">
+                    <!-- Portfolio Item 3 (Video) -->
+                    <div class="portfolio-item glass-panel gsap-fade-up">
+                        <div class="pi-image-wrapper portfolio-video-container">
+                            <video loop playsinline class="pi-media portfolio-video" muted>
                                 <source src="https://drive.google.com/uc?export=download&id=16-D1OmJqvhIr67cZgtBP8UCrCTYMuHuO" type="video/mp4">
                             </video>
                             <div class="pi-overlay"></div>
-                            <div class="play-icon-overlay"><i data-lucide="play-circle"></i></div>
+                            
+                            <!-- Video Controls Overlay -->
+                            <div class="video-controls">
+                                <button class="video-play-btn sfx-hover" aria-label="Play/Pause">
+                                    <i data-lucide="play-circle" class="play-icon"></i>
+                                    <i data-lucide="pause-circle" class="pause-icon" style="display:none;"></i>
+                                </button>
+                                <button class="video-mute-btn sfx-hover" aria-label="Mute/Unmute">
+                                    <i data-lucide="volume-x" class="mute-icon"></i>
+                                    <i data-lucide="volume-2" class="unmute-icon" style="display:none;"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="pi-content">
+                        <a href="mailto:booking@middleclassmusicians.com" class="pi-content sfx-hover" style="display: block; text-decoration: none; color: inherit;">
                             <h4>Control Room Master</h4>
                             <span>Mixing & Mastering</span>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- LINKTREE PORTFOLIO SHOWCASE -->
+                <div class="portfolio-showcase-banner glass-panel gsap-fade-up sfx-hover" style="margin-top: 4rem;">
+                    <div class="banner-content">
+                        <h3>Explore Our Complete Archive</h3>
+                        <p>Dive into our extended catalog of productions, mixes, and cinematic visuals.</p>
+                        <a href="https://linktr.ee/middleclassmusicians?fbclid=PAZXh0bgNhZW0CMTEAAaZq_NjJ0vzWulKIgj4xxFTEo-ICGPIP6D_kVdXKcBrZ8yVUFjXiqbi95J4_aem_98jXcIBxY3FRd4RmTzmu2g" target="_blank" class="glass-btn btn-large sfx-hover">
+                            View Full Portfolio <i data-lucide="external-link" style="margin-left: 10px; width: 20px;"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
     <!-- FLOATING AUDIO PLAYER / EQUALIZER -->
-    <div class="floating-player glass-panel sfx-hover" id="eq-player">
+    <div class="floating-player glass-panel sfx-hover paused" id="eq-player">
         <div class="eq-info">
             <i data-lucide="disc" class="spin-disc"></i>
-            <span class="track-name">O Piyaa - Playing</span>
+            <span class="track-name">O Piyaa - Paused</span>
         </div>
         <div class="equalizer">
             <span class="bar"></span>
