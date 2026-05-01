@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Lock scroll during preload
+    document.body.classList.add('preloading');
+
     // 1. Icons Init
     lucide.createIcons();
 
@@ -12,7 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.ticker.add((time) => { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
 
-    // 3. Custom Cursor (Only active if not on mobile/touch)
+    // Ensure anchor links scroll properly
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            lenis.scrollTo(this.getAttribute('href'), {
+                duration: 1.5,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+            });
+        });
+    });
+
+    // 3. Custom Cursor (Desktop Only)
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const cursorDot = document.querySelector('.cursor-dot');
     const cursorOutline = document.querySelector('.cursor-outline');
@@ -23,12 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
             cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
             cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
         });
-    }
 
-    // Hover effect on elements with .sfx-hover class
-    const hoverElements = document.querySelectorAll('.sfx-hover, a, button');
-    hoverElements.forEach(el => {
-        if (!isTouchDevice) {
+        const hoverElements = document.querySelectorAll('.sfx-hover, a, button');
+        hoverElements.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '50px';
                 cursorOutline.style.height = '50px';
@@ -40,9 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 cursorOutline.style.height = '30px';
                 cursorOutline.style.backgroundColor = 'transparent';
             });
-        }
-        el.addEventListener('click', () => playSfx(800, 0.1)); // click sound
-    });
+            el.addEventListener('click', () => playSfx(800, 0.1));
+        });
+    }
 
     // 4. Web Audio API SFX
     let audioCtx;
@@ -66,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body.setAttribute('data-theme', isDark ? 'light' : 'dark');
     });
 
-    // 6. Hero Slider Auto-Play (Fixed)
+    // 6. Hero Slider Auto-Play
     const slides = document.querySelectorAll('.hero-slider .slide');
     if (slides.length > 0) {
         let currentSlide = 0;
@@ -77,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 
-    // 7. Interactive Button Logic (Mobile Optimized)
+    // 7. Interactive Button Logic
     const magicBtn = document.getElementById('magic-btn');
     const subNodes = document.querySelectorAll('.sub-node');
     let isExpanded = false;
@@ -89,12 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
             magicBtn.style.color = "var(--bg-color)";
             document.querySelector('.sub-nodes').style.pointerEvents = "auto";
             
-            // Adjust radius dynamically for mobile vs desktop so it doesn't overflow
-            const radius = window.innerWidth <= 768 ? 120 : 250; 
+            const radius = window.innerWidth <= 768 ? 130 : 250; 
             const angleStep = (Math.PI * 2) / subNodes.length;
 
             subNodes.forEach((node, index) => {
-                const angle = index * angleStep - Math.PI / 2; // start from top
+                const angle = index * angleStep - Math.PI / 2;
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
 
@@ -138,35 +148,61 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 9. GSAP Scroll Animations
+    // 9. GSAP Preloader & Scroll Animations
     gsap.registerPlugin(ScrollTrigger);
-
-    gsap.from(".hero-title .line", {
-        y: "110%", duration: 1.5, stagger: 0.15, ease: "power4.out", delay: 0.2
+    
+    const preloaderTl = gsap.timeline();
+    
+    preloaderTl.to('.preloader-text', {
+        opacity: 1,
+        letterSpacing: "0.15em",
+        duration: 1.5,
+        ease: "power2.out",
+        delay: 0.5
+    })
+    .to('.preloader-line', {
+        width: "200px",
+        duration: 1,
+        ease: "power2.inOut"
+    }, "-=1")
+    .to('#preloader', {
+        yPercent: -100,
+        duration: 1.2,
+        ease: "power4.inOut",
+        delay: 0.5,
+        onComplete: () => {
+            document.getElementById('preloader').remove();
+            document.body.classList.remove('preloading');
+            initMainAnimations();
+        }
     });
-    gsap.from(".gsap-fade-delay", {
-        opacity: 0, y: 20, duration: 1.2, stagger: 0.1, ease: "power3.out", delay: 0.8
-    });
 
-    gsap.utils.toArray('.gsap-reveal').forEach(header => {
-        gsap.from(header, {
-            scrollTrigger: { trigger: header, start: "top 85%" },
-            y: 30, opacity: 0, duration: 1.2, ease: "power3.out"
+    function initMainAnimations() {
+        gsap.from(".hero-title .line", {
+            y: "110%", duration: 1.5, stagger: 0.15, ease: "power4.out"
         });
-    });
-
-    gsap.utils.toArray('.gsap-fade-up').forEach(item => {
-        gsap.from(item, {
-            scrollTrigger: { trigger: item, start: "top 85%" },
-            y: 50, opacity: 0, duration: 1.2, ease: "power3.out"
+        gsap.from(".gsap-fade-delay", {
+            opacity: 0, y: 20, duration: 1.2, stagger: 0.1, ease: "power3.out", delay: 0.5
         });
-    });
+        gsap.utils.toArray('.gsap-reveal').forEach(header => {
+            gsap.from(header, {
+                scrollTrigger: { trigger: header, start: "top 85%" },
+                y: 30, opacity: 0, duration: 1.2, ease: "power3.out"
+            });
+        });
+        gsap.utils.toArray('.gsap-fade-up').forEach(item => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: "top 85%" },
+                y: 50, opacity: 0, duration: 1.2, ease: "power3.out"
+            });
+        });
+    }
 
     // 10. Shader Background Init
     initShaderBackground();
 });
 
-// --- SHADER (Audio Oscilloscope Vibe) ---
+// --- SHADER ---
 function initShaderBackground() {
     const canvas = document.getElementById('shader-bg');
     if (!canvas) return;
@@ -194,20 +230,15 @@ function initShaderBackground() {
             for(float i = 0.0; i < 4.0; i++) {
                 float freq = 2.0 + i * 1.5;
                 float amp = 0.2 + sin(time + i) * 0.1;
-                
                 float j = p.x + sin(time * 2.0 + p.y * 5.0) * 0.1;
                 float wave = sin(j * freq + time * (1.0 + i * 0.5)) * amp;
-                
                 float thickness = 0.01 / abs(p.y - wave);
-                
                 vec3 c = vec3(0.2, 0.1, 0.5) * (i + 1.0);
                 if (i == 3.0) c = vec3(0.8, 0.8, 1.0);
-                
                 color += c * thickness;
             }
             
             vec3 bg = mix(vec3(0.02, 0.02, 0.03), vec3(0.05, 0.0, 0.1), length(p));
-            
             gl_FragColor = vec4(bg + color * 0.5, 1.0);
         }
     `;
