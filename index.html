@@ -19,11 +19,16 @@
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body data-theme="dark">
-    <!-- Cinematic Preloader -->
+<body data-theme="dark" class="preloading">
+
+    <!-- CINEMATIC PRELOADER -->
     <div id="preloader">
-        <div class="preloader-text">Middle Class Musicians</div>
-        <div class="preloader-line"></div>
+        <div class="preloader-content">
+            <h1 class="preloader-title">Middle Class Musicians</h1>
+            <div class="preloader-bar-container">
+                <div class="preloader-bar"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Custom Cursor -->
@@ -35,7 +40,7 @@
     <div class="noise-overlay"></div>
 
     <!-- Theme Toggle -->
-    <button class="theme-toggle glass-panel sfx-hover" id="theme-btn">
+    <button class="theme-toggle glass-panel sfx-hover" id="theme-btn" aria-label="Toggle Theme">
         <i data-lucide="sun" class="sun-icon"></i>
         <i data-lucide="moon" class="moon-icon"></i>
     </button>
@@ -73,7 +78,7 @@
             
             <div class="hero-right">
                 <!-- Auto Sliding Image Preview -->
-                <div class="hero-slider">
+                <div class="hero-slider" id="hero-slider">
                     <div class="slide active" style="background-image: url('https://lh3.googleusercontent.com/d/1AmyFUO3fCBcauHfsWG0-zWBlRrfy6o8E');"></div>
                     <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/d/1aSvW7Bep42TUfMXBb7kn6nU1Y7bbWJRP');"></div>
                     <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/d/16wildrlQxD9pmGyp-8PcYiMC_aQR4NE8');"></div>
@@ -89,6 +94,7 @@
                     <button id="magic-btn" class="glass-btn massive-btn sfx-hover">Don't Touch It</button>
                     
                     <div class="sub-nodes">
+                        <!-- Redirects to portfolio section smoothly -->
                         <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="mic"></i> Recording</a>
                         <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="sliders"></i> Mixing & Mastering</a>
                         <a href="#portfolio" class="sub-node glass-panel sfx-hover"><i data-lucide="drum"></i> Beat Production</a>
@@ -149,11 +155,17 @@
                     </a>
                 </div>
 
-                <div class="portfolio-cta gsap-fade-up">
-                    <a href="https://linktr.ee/middleclassmusicians?fbclid=PAZXh0bgNhZW0CMTEAAaZq_NjJ0vzWulKIgj4xxFTEo-ICGPIP6D_kVdXKcBrZ8yVUFjXiqbi95J4_aem_98jXcIBxY3FRd4RmTzmu2g" target="_blank" class="glass-btn btn-large sfx-hover">
-                        Explore Full Portfolio <i data-lucide="external-link" style="margin-left: 10px; width: 20px;"></i>
-                    </a>
+                <!-- LINKTREE PORTFOLIO SHOWCASE -->
+                <div class="portfolio-showcase-banner glass-panel gsap-fade-up sfx-hover">
+                    <div class="banner-content">
+                        <h3>Explore Our Complete Archive</h3>
+                        <p>Dive into our extended catalog of productions, mixes, and cinematic visuals.</p>
+                        <a href="https://linktr.ee/middleclassmusicians?fbclid=PAZXh0bgNhZW0CMTEAAaZq_NjJ0vzWulKIgj4xxFTEo-ICGPIP6D_kVdXKcBrZ8yVUFjXiqbi95J4_aem_98jXcIBxY3FRd4RmTzmu2g" target="_blank" class="glass-btn btn-large sfx-hover">
+                            View Full Portfolio <i data-lucide="external-link" style="margin-left: 10px; width: 20px;"></i>
+                        </a>
+                    </div>
                 </div>
+
             </div>
         </section>
     </main>
@@ -182,6 +194,7 @@
                     <h3>Locate Middle Class Musicians</h3>
                     <p>Click to open Google Maps</p>
                 </div>
+                <!-- Simulated map background -->
                 <div class="map-bg" style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80');"></div>
             </div>
 
