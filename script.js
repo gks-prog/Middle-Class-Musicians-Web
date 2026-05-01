@@ -12,29 +12,35 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.ticker.add((time) => { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
 
-    // 3. Custom Cursor
+    // 3. Custom Cursor (Only active if not on mobile/touch)
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const cursorDot = document.querySelector('.cursor-dot');
     const cursorOutline = document.querySelector('.cursor-outline');
-    window.addEventListener('mousemove', (e) => {
-        const posX = e.clientX; const posY = e.clientY;
-        cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
-        cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
-    });
+    
+    if (!isTouchDevice) {
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX; const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+            cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
+        });
+    }
 
     // Hover effect on elements with .sfx-hover class
     const hoverElements = document.querySelectorAll('.sfx-hover, a, button');
     hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursorOutline.style.width = '50px';
-            cursorOutline.style.height = '50px';
-            cursorOutline.style.backgroundColor = 'rgba(255,255,255,0.1)';
-            playSfx(600, 0.05); // subtle hover sound
-        });
-        el.addEventListener('mouseleave', () => {
-            cursorOutline.style.width = '30px';
-            cursorOutline.style.height = '30px';
-            cursorOutline.style.backgroundColor = 'transparent';
-        });
+        if (!isTouchDevice) {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '50px';
+                cursorOutline.style.height = '50px';
+                cursorOutline.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                playSfx(600, 0.05); // subtle hover sound
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '30px';
+                cursorOutline.style.height = '30px';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        }
         el.addEventListener('click', () => playSfx(800, 0.1)); // click sound
     });
 
@@ -60,16 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
         body.setAttribute('data-theme', isDark ? 'light' : 'dark');
     });
 
-    // 6. Hero Slider Auto-Play
+    // 6. Hero Slider Auto-Play (Fixed)
     const slides = document.querySelectorAll('.hero-slider .slide');
-    let currentSlide = 0;
-    setInterval(() => {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.add('active');
-    }, 4000);
+    if (slides.length > 0) {
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 4000);
+    }
 
-    // 7. Interactive Button Logic
+    // 7. Interactive Button Logic (Mobile Optimized)
     const magicBtn = document.getElementById('magic-btn');
     const subNodes = document.querySelectorAll('.sub-node');
     let isExpanded = false;
@@ -81,7 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
             magicBtn.style.color = "var(--bg-color)";
             document.querySelector('.sub-nodes').style.pointerEvents = "auto";
             
-            const radius = window.innerWidth < 768 ? 120 : 220; // responsive radius
+            // Adjust radius dynamically for mobile vs desktop so it doesn't overflow
+            const radius = window.innerWidth <= 768 ? 120 : 250; 
             const angleStep = (Math.PI * 2) / subNodes.length;
 
             subNodes.forEach((node, index) => {
@@ -157,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initShaderBackground();
 });
 
-// --- SHADER (Tweaked for Audio/Oscilloscope Vibe) ---
+// --- SHADER (Audio Oscilloscope Vibe) ---
 function initShaderBackground() {
     const canvas = document.getElementById('shader-bg');
     if (!canvas) return;
@@ -170,7 +179,6 @@ function initShaderBackground() {
         void main() { gl_Position = aVertexPosition; }
     `;
 
-    // Modified shader to look more like frequency waves/audio oscilloscope
     const fsSource = `
         precision highp float;
         uniform vec2 iResolution;
@@ -178,34 +186,26 @@ function initShaderBackground() {
 
         void main() {
             vec2 uv = gl_FragCoord.xy / iResolution.xy;
-            // Center the Y coordinate
             vec2 p = uv * 2.0 - 1.0; 
             
             float time = iTime * 0.5;
             vec3 color = vec3(0.0);
             
-            // Generate multiple sine waves
             for(float i = 0.0; i < 4.0; i++) {
                 float freq = 2.0 + i * 1.5;
                 float amp = 0.2 + sin(time + i) * 0.1;
                 
-                // Add warping to x for oscilloscope jitter
                 float j = p.x + sin(time * 2.0 + p.y * 5.0) * 0.1;
-                
-                // Wave equation
                 float wave = sin(j * freq + time * (1.0 + i * 0.5)) * amp;
                 
-                // Thickness and glow
                 float thickness = 0.01 / abs(p.y - wave);
                 
-                // Colors (Luxury violet/blue/white)
                 vec3 c = vec3(0.2, 0.1, 0.5) * (i + 1.0);
-                if (i == 3.0) c = vec3(0.8, 0.8, 1.0); // Highlight wave
+                if (i == 3.0) c = vec3(0.8, 0.8, 1.0);
                 
                 color += c * thickness;
             }
             
-            // Background gradient
             vec3 bg = mix(vec3(0.02, 0.02, 0.03), vec3(0.05, 0.0, 0.1), length(p));
             
             gl_FragColor = vec4(bg + color * 0.5, 1.0);
