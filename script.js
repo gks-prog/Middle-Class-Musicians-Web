@@ -1,205 +1,214 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Initialize Lenis Smooth Scroll
+    // 1. Icons Init
+    lucide.createIcons();
+
+    // 2. Lenis Smooth Scroll
     const lenis = new Lenis({
-        duration: 1.5,
+        duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-        direction: 'vertical',
-        gestureDirection: 'vertical',
         smooth: true,
     });
-
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
 
-    // 2. Initialize WebGL Shader Background
-    initShaderBackground();
+    // 3. Custom Cursor
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    window.addEventListener('mousemove', (e) => {
+        const posX = e.clientX; const posY = e.clientY;
+        cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+        cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
+    });
 
-    // 3. GSAP Animations
-    gsap.registerPlugin(ScrollTrigger);
+    // Hover effect on elements with .sfx-hover class
+    const hoverElements = document.querySelectorAll('.sfx-hover, a, button');
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.style.width = '50px';
+            cursorOutline.style.height = '50px';
+            cursorOutline.style.backgroundColor = 'rgba(255,255,255,0.1)';
+            playSfx(600, 0.05); // subtle hover sound
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '30px';
+            cursorOutline.style.height = '30px';
+            cursorOutline.style.backgroundColor = 'transparent';
+        });
+        el.addEventListener('click', () => playSfx(800, 0.1)); // click sound
+    });
 
-    const tl = gsap.timeline();
+    // 4. Web Audio API SFX
+    let audioCtx;
+    function playSfx(freq, vol) {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = 'sine'; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
 
-    // Hero Text Reveal
-    tl.from(".hero-title .line", {
-        y: "110%",
-        duration: 1.5,
-        stagger: 0.15,
-        ease: "power4.out",
-        delay: 0.2
-    })
-    .from(".gsap-fade-delay", {
-        opacity: 0,
-        y: 20,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power3.out"
-    }, "-=1")
-    .from(".now-playing-card", {
-        x: -50,
-        opacity: 0,
-        duration: 1.5,
-        ease: "power4.out"
-    }, "-=1.2");
+    // 5. Theme Toggle
+    const themeBtn = document.getElementById('theme-btn');
+    themeBtn.addEventListener('click', () => {
+        const body = document.body;
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    });
 
-    // Hero Image Parallax
-    gsap.to(".hero-image", {
-        yPercent: 15,
-        ease: "none",
-        scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true
+    // 6. Hero Slider Auto-Play
+    const slides = document.querySelectorAll('.hero-slider .slide');
+    let currentSlide = 0;
+    setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }, 4000);
+
+    // 7. Interactive Button Logic
+    const magicBtn = document.getElementById('magic-btn');
+    const subNodes = document.querySelectorAll('.sub-node');
+    let isExpanded = false;
+
+    magicBtn.addEventListener('click', () => {
+        if (!isExpanded) {
+            magicBtn.innerText = "One Stop Solution for Artist";
+            magicBtn.style.background = "var(--text-primary)";
+            magicBtn.style.color = "var(--bg-color)";
+            document.querySelector('.sub-nodes').style.pointerEvents = "auto";
+            
+            const radius = window.innerWidth < 768 ? 120 : 220; // responsive radius
+            const angleStep = (Math.PI * 2) / subNodes.length;
+
+            subNodes.forEach((node, index) => {
+                const angle = index * angleStep - Math.PI / 2; // start from top
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+
+                gsap.to(node, {
+                    x: x, y: y,
+                    scale: 1, opacity: 1,
+                    duration: 1,
+                    ease: "back.out(1.5)",
+                    delay: index * 0.1
+                });
+            });
+            isExpanded = true;
+        } else {
+            magicBtn.innerText = "Don't Touch It";
+            magicBtn.style.background = "var(--glass-bg)";
+            magicBtn.style.color = "var(--text-primary)";
+            document.querySelector('.sub-nodes').style.pointerEvents = "none";
+            
+            gsap.to(subNodes, {
+                x: 0, y: 0,
+                scale: 0, opacity: 0,
+                duration: 0.6,
+                ease: "power2.in",
+                stagger: 0.05
+            });
+            isExpanded = false;
         }
     });
 
-    // Section Headers
+    // 8. Floating Equalizer Logic
+    const eqPlayer = document.getElementById('eq-player');
+    let isPlaying = true;
+    eqPlayer.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if(isPlaying) {
+            eqPlayer.classList.remove('paused');
+            eqPlayer.querySelector('.track-name').innerText = "O Piyaa - Playing";
+        } else {
+            eqPlayer.classList.add('paused');
+            eqPlayer.querySelector('.track-name').innerText = "Paused";
+        }
+    });
+
+    // 9. GSAP Scroll Animations
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from(".hero-title .line", {
+        y: "110%", duration: 1.5, stagger: 0.15, ease: "power4.out", delay: 0.2
+    });
+    gsap.from(".gsap-fade-delay", {
+        opacity: 0, y: 20, duration: 1.2, stagger: 0.1, ease: "power3.out", delay: 0.8
+    });
+
     gsap.utils.toArray('.gsap-reveal').forEach(header => {
         gsap.from(header, {
-            scrollTrigger: {
-                trigger: header,
-                start: "top 85%",
-            },
-            y: 30,
-            opacity: 0,
-            duration: 1.2,
-            ease: "power3.out"
+            scrollTrigger: { trigger: header, start: "top 85%" },
+            y: 30, opacity: 0, duration: 1.2, ease: "power3.out"
         });
     });
 
-    // Fade Up Elements
     gsap.utils.toArray('.gsap-fade-up').forEach(item => {
         gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: "top 85%",
-            },
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            ease: "power3.out"
+            scrollTrigger: { trigger: item, start: "top 85%" },
+            y: 50, opacity: 0, duration: 1.2, ease: "power3.out"
         });
     });
 
-    // Scale Up Contact
-    gsap.from(".gsap-scale-up", {
-        scrollTrigger: {
-            trigger: ".contact",
-            start: "top 80%",
-        },
-        scale: 0.95,
-        opacity: 0,
-        duration: 1.5,
-        ease: "power3.out"
-    });
+    // 10. Shader Background Init
+    initShaderBackground();
 });
 
-// --- WEBGL SHADER IMPLEMENTATION ---
+// --- SHADER (Tweaked for Audio/Oscilloscope Vibe) ---
 function initShaderBackground() {
     const canvas = document.getElementById('shader-bg');
     if (!canvas) return;
 
     const gl = canvas.getContext('webgl');
-    if (!gl) {
-        console.warn('WebGL not supported.');
-        return;
-    }
+    if (!gl) return;
 
     const vsSource = `
         attribute vec4 aVertexPosition;
-        void main() {
-            gl_Position = aVertexPosition;
-        }
+        void main() { gl_Position = aVertexPosition; }
     `;
 
+    // Modified shader to look more like frequency waves/audio oscilloscope
     const fsSource = `
         precision highp float;
         uniform vec2 iResolution;
         uniform float iTime;
 
-        const float overallSpeed = 0.2;
-        const float gridSmoothWidth = 0.015;
-        const float axisWidth = 0.05;
-        const float majorLineWidth = 0.025;
-        const float minorLineWidth = 0.0125;
-        const float majorLineFrequency = 5.0;
-        const float minorLineFrequency = 1.0;
-        const vec4 gridColor = vec4(0.5);
-        const float scale = 5.0;
-        
-        // Luxury Cinematic Purple/Magenta Glow
-        const vec4 lineColor = vec4(0.4, 0.1, 0.6, 1.0); 
-        
-        const float minLineWidth = 0.01;
-        const float maxLineWidth = 0.2;
-        const float lineSpeed = 1.0 * overallSpeed;
-        const float lineAmplitude = 1.0;
-        const float lineFrequency = 0.2;
-        const float warpSpeed = 0.2 * overallSpeed;
-        const float warpFrequency = 0.5;
-        const float warpAmplitude = 1.0;
-        const float offsetFrequency = 0.5;
-        const float offsetSpeed = 1.33 * overallSpeed;
-        const float minOffsetSpread = 0.6;
-        const float maxOffsetSpread = 2.0;
-        const int linesPerGroup = 16;
-
-        #define drawCircle(pos, radius, coord) smoothstep(radius + gridSmoothWidth, radius, length(coord - (pos)))
-        #define drawSmoothLine(pos, halfWidth, t) smoothstep(halfWidth, 0.0, abs(pos - (t)))
-        #define drawCrispLine(pos, halfWidth, t) smoothstep(halfWidth + gridSmoothWidth, halfWidth, abs(pos - (t)))
-        #define drawPeriodicLine(freq, width, t) drawCrispLine(freq / 2.0, width, abs(mod(t, freq) - (freq) / 2.0))
-
-        float random(float t) {
-            return (cos(t) + cos(t * 1.3 + 1.3) + cos(t * 1.4 + 1.4)) / 3.0;
-        }
-
-        float getPlasmaY(float x, float horizontalFade, float offset) {
-            return random(x * lineFrequency + iTime * lineSpeed) * horizontalFade * lineAmplitude + offset;
-        }
-
         void main() {
-            vec2 fragCoord = gl_FragCoord.xy;
-            vec4 fragColor;
-            vec2 uv = fragCoord.xy / iResolution.xy;
-            vec2 space = (fragCoord - iResolution.xy / 2.0) / iResolution.x * 2.0 * scale;
-
-            float horizontalFade = 1.0 - (cos(uv.x * 6.28) * 0.5 + 0.5);
-            float verticalFade = 1.0 - (cos(uv.y * 6.28) * 0.5 + 0.5);
-
-            space.y += random(space.x * warpFrequency + iTime * warpSpeed) * warpAmplitude * (0.5 + horizontalFade);
-            space.x += random(space.y * warpFrequency + iTime * warpSpeed + 2.0) * warpAmplitude * horizontalFade;
-
-            vec4 lines = vec4(0.0);
+            vec2 uv = gl_FragCoord.xy / iResolution.xy;
+            // Center the Y coordinate
+            vec2 p = uv * 2.0 - 1.0; 
             
-            // Deep Luxury Dark Colors
-            vec4 bgColor1 = vec4(0.03, 0.03, 0.05, 1.0); 
-            vec4 bgColor2 = vec4(0.06, 0.02, 0.08, 1.0);
-
-            for(int l = 0; l < linesPerGroup; l++) {
-                float normalizedLineIndex = float(l) / float(linesPerGroup);
-                float offsetTime = iTime * offsetSpeed;
-                float offsetPosition = float(l) + space.x * offsetFrequency;
-                float rand = random(offsetPosition + offsetTime) * 0.5 + 0.5;
-                float halfWidth = mix(minLineWidth, maxLineWidth, rand * horizontalFade) / 2.0;
-                float offset = random(offsetPosition + offsetTime * (1.0 + normalizedLineIndex)) * mix(minOffsetSpread, maxOffsetSpread, horizontalFade);
-                float linePosition = getPlasmaY(space.x, horizontalFade, offset);
-                float line = drawSmoothLine(linePosition, halfWidth, space.y) / 2.0 + drawCrispLine(linePosition, halfWidth * 0.15, space.y);
-
-                float circleX = mod(float(l) + iTime * lineSpeed, 25.0) - 12.0;
-                vec2 circlePosition = vec2(circleX, getPlasmaY(circleX, horizontalFade, offset));
-                float circle = drawCircle(circlePosition, 0.01, space) * 4.0;
-
-                line = line + circle;
-                lines += line * lineColor * rand;
+            float time = iTime * 0.5;
+            vec3 color = vec3(0.0);
+            
+            // Generate multiple sine waves
+            for(float i = 0.0; i < 4.0; i++) {
+                float freq = 2.0 + i * 1.5;
+                float amp = 0.2 + sin(time + i) * 0.1;
+                
+                // Add warping to x for oscilloscope jitter
+                float j = p.x + sin(time * 2.0 + p.y * 5.0) * 0.1;
+                
+                // Wave equation
+                float wave = sin(j * freq + time * (1.0 + i * 0.5)) * amp;
+                
+                // Thickness and glow
+                float thickness = 0.01 / abs(p.y - wave);
+                
+                // Colors (Luxury violet/blue/white)
+                vec3 c = vec3(0.2, 0.1, 0.5) * (i + 1.0);
+                if (i == 3.0) c = vec3(0.8, 0.8, 1.0); // Highlight wave
+                
+                color += c * thickness;
             }
-
-            fragColor = mix(bgColor1, bgColor2, uv.x);
-            fragColor *= verticalFade;
-            fragColor.a = 1.0;
-            fragColor += lines;
-
-            gl_FragColor = fragColor;
+            
+            // Background gradient
+            vec3 bg = mix(vec3(0.02, 0.02, 0.03), vec3(0.05, 0.0, 0.1), length(p));
+            
+            gl_FragColor = vec4(bg + color * 0.5, 1.0);
         }
     `;
 
@@ -207,17 +216,11 @@ function initShaderBackground() {
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error('Shader compile error: ', gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            return null;
-        }
         return shader;
     }
 
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
     const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
     const shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
@@ -225,51 +228,32 @@ function initShaderBackground() {
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    const positions = [
-        -1.0, -1.0,
-         1.0, -1.0,
-        -1.0,  1.0,
-         1.0,  1.0,
-    ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
 
-    const programInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-        },
-        uniformLocations: {
-            resolution: gl.getUniformLocation(shaderProgram, 'iResolution'),
-            time: gl.getUniformLocation(shaderProgram, 'iTime'),
-        },
-    };
+    const posAttr = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    const resUnif = gl.getUniformLocation(shaderProgram, 'iResolution');
+    const timeUnif = gl.getUniformLocation(shaderProgram, 'iTime');
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         gl.viewport(0, 0, canvas.width, canvas.height);
     }
-
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
     let startTime = Date.now();
     function render() {
-        const currentTime = (Date.now() - startTime) / 1000;
-
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.useProgram(programInfo.program);
-        gl.uniform2f(programInfo.uniformLocations.resolution, canvas.width, canvas.height);
-        gl.uniform1f(programInfo.uniformLocations.time, currentTime);
-
+        gl.useProgram(shaderProgram);
+        gl.uniform2f(resUnif, canvas.width, canvas.height);
+        gl.uniform1f(timeUnif, (Date.now() - startTime) / 1000);
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
-
+        gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(posAttr);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         requestAnimationFrame(render);
     }
-    requestAnimationFrame(render);
+    render();
 }
