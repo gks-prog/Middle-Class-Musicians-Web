@@ -45,8 +45,6 @@ const ShaderBackground = () => {
         gl_FragColor = vec4(bg + color * 0.5, 1.0);
     }
   `;
-
-  // ... [Standard WebGL init logic exactly matching the vanilla script.js function above] ...
   
   useEffect(() => {
     const canvas = canvasRef.current;
