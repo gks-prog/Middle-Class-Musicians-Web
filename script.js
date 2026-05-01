@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Initial Setup
+    // 1. Icons Init
     lucide.createIcons();
-    window.scrollTo(0, 0); // Force scroll to top on load
 
-    // 2. Lenis Smooth Scroll Setup
+    // 2. Lenis Smooth Scroll
     const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
@@ -13,59 +12,23 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.ticker.add((time) => { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
 
-    // Ensure anchor links scroll smoothly and perfectly
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = this.getAttribute('href');
-            lenis.scrollTo(target, {
-                duration: 1.5,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-            });
-        });
-    });
-
-    // 3. Cinematic Preloader Sequence
-    const preloaderTl = gsap.timeline();
-    
-    preloaderTl.to('.preloader-title', {
-        opacity: 1,
-        letterSpacing: "0.15em",
-        duration: 1.5,
-        ease: "power2.out",
-        delay: 0.5
-    })
-    .to('.preloader-bar', {
-        width: "100%",
-        duration: 1,
-        ease: "power2.inOut"
-    }, "-=1")
-    .to('#preloader', {
-        yPercent: -100,
-        duration: 1.2,
-        ease: "power4.inOut",
-        delay: 0.5,
-        onComplete: () => {
-            document.getElementById('preloader').style.display = 'none';
-            document.body.classList.remove('preloading');
-            initMainAnimations();
-        }
-    });
-
-    // 4. Custom Cursor (Desktop Only)
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia("(pointer: coarse)").matches;
+    // 3. Custom Cursor (Only active if not on mobile/touch)
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const cursorDot = document.querySelector('.cursor-dot');
     const cursorOutline = document.querySelector('.cursor-outline');
     
-    if (!isTouchDevice && cursorDot && cursorOutline) {
+    if (!isTouchDevice) {
         window.addEventListener('mousemove', (e) => {
             const posX = e.clientX; const posY = e.clientY;
             cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
             cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
         });
+    }
 
-        const hoverElements = document.querySelectorAll('.sfx-hover, a, button');
-        hoverElements.forEach(el => {
+    // Hover effect on elements with .sfx-hover class
+    const hoverElements = document.querySelectorAll('.sfx-hover, a, button');
+    hoverElements.forEach(el => {
+        if (!isTouchDevice) {
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '50px';
                 cursorOutline.style.height = '50px';
@@ -77,11 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 cursorOutline.style.height = '30px';
                 cursorOutline.style.backgroundColor = 'transparent';
             });
-            el.addEventListener('click', () => playSfx(800, 0.1));
-        });
-    }
+        }
+        el.addEventListener('click', () => playSfx(800, 0.1)); // click sound
+    });
 
-    // 5. Web Audio API SFX
+    // 4. Web Audio API SFX
     let audioCtx;
     function playSfx(freq, vol) {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -95,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // 6. Theme Toggle
+    // 5. Theme Toggle
     const themeBtn = document.getElementById('theme-btn');
     themeBtn.addEventListener('click', () => {
         const body = document.body;
@@ -103,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body.setAttribute('data-theme', isDark ? 'light' : 'dark');
     });
 
-    // 7. Hero Slider Auto-Play Fix
+    // 6. Hero Slider Auto-Play (Fixed)
     const slides = document.querySelectorAll('.hero-slider .slide');
     if (slides.length > 0) {
         let currentSlide = 0;
@@ -114,24 +77,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 
-    // 8. Interactive Button Logic
+    // 7. Interactive Button Logic (Mobile Optimized)
     const magicBtn = document.getElementById('magic-btn');
     const subNodes = document.querySelectorAll('.sub-node');
     let isExpanded = false;
 
-    // Toggle menu
     magicBtn.addEventListener('click', () => {
         if (!isExpanded) {
-            magicBtn.innerText = "One Stop Solution";
+            magicBtn.innerText = "One Stop Solution for Artist";
             magicBtn.style.background = "var(--text-primary)";
             magicBtn.style.color = "var(--bg-color)";
             document.querySelector('.sub-nodes').style.pointerEvents = "auto";
             
-            const radius = window.innerWidth <= 768 ? 130 : 250; 
+            // Adjust radius dynamically for mobile vs desktop so it doesn't overflow
+            const radius = window.innerWidth <= 768 ? 120 : 250; 
             const angleStep = (Math.PI * 2) / subNodes.length;
 
             subNodes.forEach((node, index) => {
-                const angle = index * angleStep - Math.PI / 2;
+                const angle = index * angleStep - Math.PI / 2; // start from top
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
 
@@ -145,36 +108,23 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             isExpanded = true;
         } else {
-            closeMagicMenu();
+            magicBtn.innerText = "Don't Touch It";
+            magicBtn.style.background = "var(--glass-bg)";
+            magicBtn.style.color = "var(--text-primary)";
+            document.querySelector('.sub-nodes').style.pointerEvents = "none";
+            
+            gsap.to(subNodes, {
+                x: 0, y: 0,
+                scale: 0, opacity: 0,
+                duration: 0.6,
+                ease: "power2.in",
+                stagger: 0.05
+            });
+            isExpanded = false;
         }
     });
 
-    // Close menu when a sub-node link is clicked
-    subNodes.forEach(node => {
-        node.addEventListener('click', () => {
-            if(isExpanded) {
-                closeMagicMenu();
-            }
-        });
-    });
-
-    function closeMagicMenu() {
-        magicBtn.innerText = "Don't Touch It";
-        magicBtn.style.background = "var(--glass-bg)";
-        magicBtn.style.color = "var(--text-primary)";
-        document.querySelector('.sub-nodes').style.pointerEvents = "none";
-        
-        gsap.to(subNodes, {
-            x: 0, y: 0,
-            scale: 0, opacity: 0,
-            duration: 0.6,
-            ease: "power2.in",
-            stagger: 0.05
-        });
-        isExpanded = false;
-    }
-
-    // 9. Floating Equalizer Logic
+    // 8. Floating Equalizer Logic
     const eqPlayer = document.getElementById('eq-player');
     let isPlaying = true;
     eqPlayer.addEventListener('click', () => {
@@ -188,38 +138,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 10. GSAP Scroll Animations (Fired after preloader)
-    function initMainAnimations() {
-        gsap.registerPlugin(ScrollTrigger);
+    // 9. GSAP Scroll Animations
+    gsap.registerPlugin(ScrollTrigger);
 
-        gsap.from(".hero-title .line", {
-            y: "110%", duration: 1.5, stagger: 0.15, ease: "power4.out"
-        });
-        
-        gsap.from(".gsap-fade-delay", {
-            opacity: 0, y: 20, duration: 1.2, stagger: 0.1, ease: "power3.out", delay: 0.5
-        });
-        
-        gsap.utils.toArray('.gsap-reveal').forEach(header => {
-            gsap.from(header, {
-                scrollTrigger: { trigger: header, start: "top 85%" },
-                y: 30, opacity: 0, duration: 1.2, ease: "power3.out"
-            });
-        });
-        
-        gsap.utils.toArray('.gsap-fade-up').forEach(item => {
-            gsap.from(item, {
-                scrollTrigger: { trigger: item, start: "top 85%" },
-                y: 50, opacity: 0, duration: 1.2, ease: "power3.out"
-            });
-        });
-    }
+    gsap.from(".hero-title .line", {
+        y: "110%", duration: 1.5, stagger: 0.15, ease: "power4.out", delay: 0.2
+    });
+    gsap.from(".gsap-fade-delay", {
+        opacity: 0, y: 20, duration: 1.2, stagger: 0.1, ease: "power3.out", delay: 0.8
+    });
 
-    // 11. Shader Background Init
+    gsap.utils.toArray('.gsap-reveal').forEach(header => {
+        gsap.from(header, {
+            scrollTrigger: { trigger: header, start: "top 85%" },
+            y: 30, opacity: 0, duration: 1.2, ease: "power3.out"
+        });
+    });
+
+    gsap.utils.toArray('.gsap-fade-up').forEach(item => {
+        gsap.from(item, {
+            scrollTrigger: { trigger: item, start: "top 85%" },
+            y: 50, opacity: 0, duration: 1.2, ease: "power3.out"
+        });
+    });
+
+    // 10. Shader Background Init
     initShaderBackground();
 });
 
-// --- SHADER (Oscilloscope Vibe) ---
+// --- SHADER (Audio Oscilloscope Vibe) ---
 function initShaderBackground() {
     const canvas = document.getElementById('shader-bg');
     if (!canvas) return;
@@ -247,15 +194,20 @@ function initShaderBackground() {
             for(float i = 0.0; i < 4.0; i++) {
                 float freq = 2.0 + i * 1.5;
                 float amp = 0.2 + sin(time + i) * 0.1;
+                
                 float j = p.x + sin(time * 2.0 + p.y * 5.0) * 0.1;
                 float wave = sin(j * freq + time * (1.0 + i * 0.5)) * amp;
+                
                 float thickness = 0.01 / abs(p.y - wave);
+                
                 vec3 c = vec3(0.2, 0.1, 0.5) * (i + 1.0);
                 if (i == 3.0) c = vec3(0.8, 0.8, 1.0);
+                
                 color += c * thickness;
             }
             
             vec3 bg = mix(vec3(0.02, 0.02, 0.03), vec3(0.05, 0.0, 0.1), length(p));
+            
             gl_FragColor = vec4(bg + color * 0.5, 1.0);
         }
     `;
