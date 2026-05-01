@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Middle Class Musicians | Premium Recording Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Smooth Scroll & GSAP -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="ambient-glow fixed-glow"></div>
+
+    <nav class="gsap-nav glass-panel">
+        <div class="logo">
+            <img src="https://drive.google.com/uc?export=view&id=1CoJ-THrbzAfmpJQbZnoV3LuJKHopkSVp" alt="MCM Logo" class="nav-logo-img">
+        </div>
+        <div class="nav-links">
+            <a href="#showcase" class="magnetic-link">Studio</a>
+            <a href="#services" class="magnetic-link">Services</a>
+            <a href="#pricing" class="magnetic-link">Pricing</a>
+            <a href="#portfolio" class="magnetic-link">Portfolio</a>
+            <a href="#contact" class="magnetic-link">Contact</a>
+        </div>
+    </nav>
+
+    <section id="hero" class="hero-section">
+        <div class="hero-bg" style="background-image: url('https://drive.google.com/uc?export=view&id=1aSvW7Bep42TUfMXBb7kn6nU1Y7bbWJRP');"></div>
+        <div class="vignette"></div>
+        <div class="hero-content">
+            
+            <div class="hero-badge glass-panel gsap-fade">
+                <span class="status-dot"></span>
+                <span>Studio Time • Starting ₹350/hr</span>
+            </div>
+
+            <h1 class="hero-title">
+                <div class="line-wrapper"><span class="line">Record.</span></div>
+                <div class="line-wrapper"><span class="line indent-1">Create.</span></div>
+                <div class="line-wrapper"><span class="line indent-2">Perform.</span></div>
+            </h1>
+            
+            <div class="hero-fade">
+                <div class="hero-text-block">
+                    <p class="hero-subtitle">Premium recording and production space.</p>
+                    <p class="trust-line">Trusted by independent artists in Delhi.</p>
+                </div>
+                
+                <div class="cta-group">
+                    <a href="https://wa.me/919315778147" class="btn btn-primary glow-btn" target="_blank" rel="noopener noreferrer">
+                        <span class="btn-text">Book Session</span>
+                    </a>
+                    <a href="#showcase" class="btn btn-secondary glow-btn-subtle">
+                        <span class="btn-text">View Studio</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator gsap-fade">
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <section id="showcase" class="section">
+        <div class="container">
+            <div class="section-header gsap-reveal">
+                <h2 class="section-title">The Space</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="grid showcase-grid">
+                <div class="showcase-item gsap-fade-up large-span">
+                    <div class="image-wrapper">
+                        <div class="image-placeholder" style="background-image: url('https://drive.google.com/uc?export=view&id=1aSvW7Bep42TUfMXBb7kn6nU1Y7bbWJRP');"></div>
+                    </div>
+                    <div class="item-meta">
+                        <h3>Main Studio View</h3>
+                        <span>01</span>
+                    </div>
+                </div>
+                <div class="showcase-item gsap-fade-up">
+                    <div class="image-wrapper">
+                        <video autoplay loop muted playsinline loading="lazy" class="video-placeholder">
+                            <source src="https://drive.google.com/uc?export=download&id=1efzxt_UqwlR5mFue7OlJc_WfscXJAoSP" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="item-meta">
+                        <h3>Vocal Tracking</h3>
+                        <span>02</span>
+                    </div>
+                </div>
+                <div class="showcase-item gsap-fade-up">
+                    <div class="image-wrapper">
+                        <video autoplay loop muted playsinline loading="lazy" class="video-placeholder">
+                            <source src="https://drive.google.com/uc?export=download&id=16-D1OmJqvhIr67cZgtBP8UCrCTYMuHuO" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="item-meta">
+                        <h3>Control Room</h3>
+                        <span>03</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section bg-darker has-glow">
+        <div class="ambient-glow center-glow"></div>
+        <div class="container">
+            <div class="section-header gsap-reveal">
+                <h2 class="section-title">Expertise</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="services-list">
+                <div class="service-row gsap-fade-up">
+                    <div class="service-num">01</div>
+                    <div class="service-content">
+                        <h3>Recording</h3>
+                        <p>Crystal clear vocal and instrument tracking using industry-standard microphones and premium preamps.</p>
+                    </div>
+                </div>
+                <div class="service-row gsap-fade-up">
+                    <div class="service-num">02</div>
+                    <div class="service-content">
+                        <h3>Mixing & Mastering</h3>
+                        <p>Professional sonic polishing to ensure your tracks translate perfectly across all major streaming platforms.</p>
+                    </div>
+                </div>
+                <div class="service-row gsap-fade-up">
+                    <div class="service-num">03</div>
+                    <div class="service-content">
+                        <h3>Beat Production</h3>
+                        <p>Custom boom bap, underground hip-hop, and modern instrumentals tailored to your artistic vision.</p>
+                    </div>
+                </div>
+                <div class="service-row gsap-fade-up">
+                    <div class="service-num">04</div>
+                    <div class="service-content">
+                        <h3>Modern & Traditional</h3>
+                        <p>Seamless integration of modern synthesis with traditional elements like Sitar, Bansuri, and Tabla.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="section">
+        <div class="container">
+            <div class="section-header gsap-reveal">
+                <h2 class="section-title">Investment</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="pricing-wrapper gsap-scale-up">
+                <div class="pricing-card glass-panel">
+                    <div class="price-header">
+                        <h4>Studio Session</h4>
+                        <div class="price">₹350<span class="currency">/hr</span></div>
+                    </div>
+                    <div class="price-body">
+                        <ul class="price-features">
+                            <li>Full access to recording booth</li>
+                            <li>Professional Engineer included</li>
+                            <li>Premium outboard gear & software</li>
+                            <li class="muted">₹100 advance booking required</li>
+                        </ul>
+                        <a href="https://wa.me/919315778147" class="btn btn-primary w-100 glow-btn" target="_blank" rel="noopener noreferrer">
+                            <span class="btn-text">Reserve Your Time</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="section bg-darker">
+        <div class="container">
+            <div class="section-header gsap-reveal">
+                <h2 class="section-title">Selected Works</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="portfolio-categories gsap-fade">
+                <button class="active">All</button>
+                <button>Hip Hop</button>
+                <button>Collaborations</button>
+                <button>Production</button>
+            </div>
+            <div class="grid portfolio-grid">
+                <div class="portfolio-card gsap-fade-up">
+                    <div class="portfolio-img-wrapper">
+                        <video autoplay loop muted playsinline loading="lazy" class="portfolio-media">
+                            <source src="https://drive.google.com/uc?export=download&id=1efzxt_UqwlR5mFue7OlJc_WfscXJAoSP" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4>"O Piyaa"</h4>
+                        <p>Masky Feat. Wenon Bont — Full Production</p>
+                    </div>
+                </div>
+                <div class="portfolio-card gsap-fade-up">
+                    <div class="portfolio-img-wrapper">
+                        <div class="portfolio-media" style="background-image: url('https://drive.google.com/uc?export=view&id=1aSvW7Bep42TUfMXBb7kn6nU1Y7bbWJRP');"></div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4>Boom Bap Archives</h4>
+                        <p>Instrumental Beat Tape — Beat Production</p>
+                    </div>
+                </div>
+                <div class="portfolio-card gsap-fade-up">
+                    <div class="portfolio-img-wrapper">
+                        <video autoplay loop muted playsinline loading="lazy" class="portfolio-media">
+                            <source src="https://drive.google.com/uc?export=download&id=16-D1OmJqvhIr67cZgtBP8UCrCTYMuHuO" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="portfolio-info">
+                        <h4>Underground Sessions</h4>
+                        <p>Independent Artist EP — Mixing & Mastering</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="section has-glow">
+        <div class="ambient-glow bottom-glow"></div>
+        <div class="container">
+            <div class="grid testimonial-grid">
+                <div class="testimonial-card gsap-fade-up">
+                    <div class="quote-mark">"</div>
+                    <p>The sonic clarity I got here elevated my entire track. Wenon's ear for mixing is unmatched. The cinematic vibe puts you instantly in the zone.</p>
+                    <h5>— Masky</h5>
+                </div>
+                <div class="testimonial-card gsap-fade-up">
+                    <div class="quote-mark">"</div>
+                    <p>Unmatched quality for the price in Delhi. The vocal chain is incredible, and the workflow is super fast and professional.</p>
+                    <h5>— Local Rapper</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer bg-darker">
+        <div class="container footer-content">
+            <h2 class="footer-title gsap-reveal">Create With Us.</h2>
+            <div class="contact-links gsap-fade-up">
+                <a href="https://wa.me/919315778147" class="contact-link magnetic-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a href="https://instagram.com/middleclassmusicians" class="contact-link magnetic-link" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href="mailto:booking@middleclassmusicians.com" class="contact-link magnetic-link">Email</a>
+            </div>
+            <div class="footer-bottom gsap-fade">
+                <div class="footer-logo">MCM</div>
+                <p>&copy; 2026 Middle Class Musicians. Managed by Wenon Bont. Delhi, India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/919315778147" class="floating-wa glass-panel" target="_blank" rel="noopener noreferrer" aria-label="Contact on WhatsApp">
+        <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+</html>
