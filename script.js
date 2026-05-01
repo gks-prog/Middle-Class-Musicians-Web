@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Lock scroll during preload
-    document.body.classList.add('preloading');
-
-    // 1. Icons Init
+    // 1. Initial Setup
     lucide.createIcons();
+    window.scrollTo(0, 0); // Force scroll to top on load
 
-    // 2. Lenis Smooth Scroll
+    // 2. Lenis Smooth Scroll Setup
     const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
@@ -15,23 +13,51 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.ticker.add((time) => { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
 
-    // Ensure anchor links scroll properly
+    // Ensure anchor links scroll smoothly and perfectly
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            lenis.scrollTo(this.getAttribute('href'), {
+            const target = this.getAttribute('href');
+            lenis.scrollTo(target, {
                 duration: 1.5,
                 easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
             });
         });
     });
 
-    // 3. Custom Cursor (Desktop Only)
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    // 3. Cinematic Preloader Sequence
+    const preloaderTl = gsap.timeline();
+    
+    preloaderTl.to('.preloader-title', {
+        opacity: 1,
+        letterSpacing: "0.15em",
+        duration: 1.5,
+        ease: "power2.out",
+        delay: 0.5
+    })
+    .to('.preloader-bar', {
+        width: "100%",
+        duration: 1,
+        ease: "power2.inOut"
+    }, "-=1")
+    .to('#preloader', {
+        yPercent: -100,
+        duration: 1.2,
+        ease: "power4.inOut",
+        delay: 0.5,
+        onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            document.body.classList.remove('preloading');
+            initMainAnimations();
+        }
+    });
+
+    // 4. Custom Cursor (Desktop Only)
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia("(pointer: coarse)").matches;
     const cursorDot = document.querySelector('.cursor-dot');
     const cursorOutline = document.querySelector('.cursor-outline');
     
-    if (!isTouchDevice) {
+    if (!isTouchDevice && cursorDot && cursorOutline) {
         window.addEventListener('mousemove', (e) => {
             const posX = e.clientX; const posY = e.clientY;
             cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
@@ -55,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 4. Web Audio API SFX
+    // 5. Web Audio API SFX
     let audioCtx;
     function playSfx(freq, vol) {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -69,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // 5. Theme Toggle
+    // 6. Theme Toggle
     const themeBtn = document.getElementById('theme-btn');
     themeBtn.addEventListener('click', () => {
         const body = document.body;
@@ -77,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body.setAttribute('data-theme', isDark ? 'light' : 'dark');
     });
 
-    // 6. Hero Slider Auto-Play
+    // 7. Hero Slider Auto-Play Fix
     const slides = document.querySelectorAll('.hero-slider .slide');
     if (slides.length > 0) {
         let currentSlide = 0;
@@ -88,14 +114,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 
-    // 7. Interactive Button Logic
+    // 8. Interactive Button Logic
     const magicBtn = document.getElementById('magic-btn');
     const subNodes = document.querySelectorAll('.sub-node');
     let isExpanded = false;
 
+    // Toggle menu
     magicBtn.addEventListener('click', () => {
         if (!isExpanded) {
-            magicBtn.innerText = "One Stop Solution for Artist";
+            magicBtn.innerText = "One Stop Solution";
             magicBtn.style.background = "var(--text-primary)";
             magicBtn.style.color = "var(--bg-color)";
             document.querySelector('.sub-nodes').style.pointerEvents = "auto";
@@ -118,23 +145,36 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             isExpanded = true;
         } else {
-            magicBtn.innerText = "Don't Touch It";
-            magicBtn.style.background = "var(--glass-bg)";
-            magicBtn.style.color = "var(--text-primary)";
-            document.querySelector('.sub-nodes').style.pointerEvents = "none";
-            
-            gsap.to(subNodes, {
-                x: 0, y: 0,
-                scale: 0, opacity: 0,
-                duration: 0.6,
-                ease: "power2.in",
-                stagger: 0.05
-            });
-            isExpanded = false;
+            closeMagicMenu();
         }
     });
 
-    // 8. Floating Equalizer Logic
+    // Close menu when a sub-node link is clicked
+    subNodes.forEach(node => {
+        node.addEventListener('click', () => {
+            if(isExpanded) {
+                closeMagicMenu();
+            }
+        });
+    });
+
+    function closeMagicMenu() {
+        magicBtn.innerText = "Don't Touch It";
+        magicBtn.style.background = "var(--glass-bg)";
+        magicBtn.style.color = "var(--text-primary)";
+        document.querySelector('.sub-nodes').style.pointerEvents = "none";
+        
+        gsap.to(subNodes, {
+            x: 0, y: 0,
+            scale: 0, opacity: 0,
+            duration: 0.6,
+            ease: "power2.in",
+            stagger: 0.05
+        });
+        isExpanded = false;
+    }
+
+    // 9. Floating Equalizer Logic
     const eqPlayer = document.getElementById('eq-player');
     let isPlaying = true;
     eqPlayer.addEventListener('click', () => {
@@ -148,48 +188,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 9. GSAP Preloader & Scroll Animations
-    gsap.registerPlugin(ScrollTrigger);
-    
-    const preloaderTl = gsap.timeline();
-    
-    preloaderTl.to('.preloader-text', {
-        opacity: 1,
-        letterSpacing: "0.15em",
-        duration: 1.5,
-        ease: "power2.out",
-        delay: 0.5
-    })
-    .to('.preloader-line', {
-        width: "200px",
-        duration: 1,
-        ease: "power2.inOut"
-    }, "-=1")
-    .to('#preloader', {
-        yPercent: -100,
-        duration: 1.2,
-        ease: "power4.inOut",
-        delay: 0.5,
-        onComplete: () => {
-            document.getElementById('preloader').remove();
-            document.body.classList.remove('preloading');
-            initMainAnimations();
-        }
-    });
-
+    // 10. GSAP Scroll Animations (Fired after preloader)
     function initMainAnimations() {
+        gsap.registerPlugin(ScrollTrigger);
+
         gsap.from(".hero-title .line", {
             y: "110%", duration: 1.5, stagger: 0.15, ease: "power4.out"
         });
+        
         gsap.from(".gsap-fade-delay", {
             opacity: 0, y: 20, duration: 1.2, stagger: 0.1, ease: "power3.out", delay: 0.5
         });
+        
         gsap.utils.toArray('.gsap-reveal').forEach(header => {
             gsap.from(header, {
                 scrollTrigger: { trigger: header, start: "top 85%" },
                 y: 30, opacity: 0, duration: 1.2, ease: "power3.out"
             });
         });
+        
         gsap.utils.toArray('.gsap-fade-up').forEach(item => {
             gsap.from(item, {
                 scrollTrigger: { trigger: item, start: "top 85%" },
@@ -198,11 +215,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 10. Shader Background Init
+    // 11. Shader Background Init
     initShaderBackground();
 });
 
-// --- SHADER ---
+// --- SHADER (Oscilloscope Vibe) ---
 function initShaderBackground() {
     const canvas = document.getElementById('shader-bg');
     if (!canvas) return;
