@@ -1,6 +1,3 @@
-// components/ui/shader-background.tsx
-// (Updated with oscilloscope sound-wave style for Next.js/React integration)
-
 "use client";
 import React, { useEffect, useRef } from 'react';
 
